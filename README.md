@@ -1,3 +1,66 @@
+Google Cloud Compute Engine Provisioning with Terraform
+
+This repository demonstrates how to provision a Google Compute Engine (GCE) virtual machine on Google Cloud Platform (GCP) using Terraform.
+With Infrastructure as Code (IaC), you can automate and standardize cloud infrastructure deployment, ensuring repeatability and reducing manual errors.
+
+Table of Contents
+
+Overview
+
+Prerequisites
+
+Architecture
+
+Setup Instructions
+
+1. Configure Google Cloud Shell
+
+2. Set Up Terraform State Storage
+
+3. Create Terraform Configuration Files
+
+4. Run Terraform Commands
+
+Verifying the Deployment
+
+Cleanup
+
+References
+
+Overview
+
+This project provisions:
+
+A Google Compute Engine (VM) running Debian 12.
+
+Remote Terraform state storage in Google Cloud Storage (GCS).
+
+Configurable region, zone, and project via variables.
+
+The setup is modular and can be extended to include networking, firewall rules, and more.
+
+Prerequisites
+
+Before starting, ensure you have:
+
+A Google Cloud Project with billing enabled.
+
+The Project ID.
+
+Access to Google Cloud Shell (pre-installed with Terraform and gcloud CLI).
+
+Permissions to create VM instances and GCS buckets.
+
+Architecture
+[Terraform]
+   |
+   v
+[Google Cloud Storage] <-- Stores Terraform state
+   |
+   v
+[Google Compute Engine VM]
+
+
 Setup Instructions
 1. Configure Google Cloud Shell
 
