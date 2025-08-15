@@ -167,6 +167,7 @@ output "vm_external_ip" {
   value       = google_compute_instance.default.network_interface[0].access_config[0].nat_ip
 }
 ```
+<img width="914" height="541" alt="Image" src="https://github.com/user-attachments/assets/85a9978e-540b-4347-b771-2a34c7dcf640" />
 
 ---
 
@@ -181,6 +182,12 @@ terraform plan
 # Apply configuration (deploy resources)
 terraform apply -auto-approve
 ```
+<img width="916" height="677" alt="Image" src="https://github.com/user-attachments/assets/9ebefe5d-5437-477d-8d77-525703fb6685" />
+
+<img width="945" height="199" alt="Image" src="https://github.com/user-attachments/assets/6730b3d1-ce02-4ca1-9a3a-ec055de73123" />
+
+
+
 
 ---
 
@@ -192,6 +199,7 @@ Navigate to **Compute Engine > VM instances** in the Google Cloud Console.
 ```sh
 gcloud compute instances list
 ```
+<img width="938" height="401" alt="Image" src="https://github.com/user-attachments/assets/6ccfbbeb-487b-468d-8919-40bd484f0ff3" />
 
 ---
 
@@ -200,6 +208,7 @@ To avoid costs:
 ```sh
 terraform destroy -auto-approve
 ```
+<img width="945" height="253" alt="Image" src="https://github.com/user-attachments/assets/eb7d7230-0283-4c66-8ee2-fbad77c0f31e" />
 
 ---
 
