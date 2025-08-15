@@ -200,8 +200,7 @@ Navigate to **Compute Engine > VM instances** in the Google Cloud Console.
 ```sh
 gcloud compute instances list
 ```
-<img width="938" height="401" alt="Image" src="https://github.com/user-attachments/assets/6ccfbbeb-487b-468d-8919-40bd484f0ff3" />
-
+<img width="1306" height="266" alt="Image" src="https://github.com/user-attachments/assets/01321764-9cc2-44e4-b6a2-f76925cc7e5b" />
 ---
 
 ## Cleanup
