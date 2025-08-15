@@ -1,6 +1,3 @@
-Here’s a revised, professional version of your README that improves structure, clarity, and formatting. It introduces the project, provides step-by-step instructions, and uses Markdown best practices:
-
----
 
 # Google Cloud Compute Engine Provisioning with Terraform
 
