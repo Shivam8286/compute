@@ -1,142 +1,130 @@
-# Google Cloud Compute Engine Provisioning with Terraform
+Setup Instructions
+1. Configure Google Cloud Shell
 
-This repository demonstrates how to use **Terraform** to provision resources on Google Cloud Platform (GCP), specifically a Compute Engine (GCE) virtual machine. By leveraging Infrastructure as Code (IaC), you can manage, version, and scale your cloud infrastructure in a reliable and automated manner.
+Open Google Cloud Shell from the GCP Console. Then:
 
----
+# Authenticate
+gcloud auth login
 
-## Table of Contents
+# Set your project
+gcloud config set project PROJECT_ID
 
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Setup Instructions](#setup-instructions)
-- [Code Explanation](#code-explanation)
-- [Verifying the Deployment](#verifying-the-deployment)
-- [Cleanup](#cleanup)
-- [References](#references)
+# Verify tools
+terraform version
+gcloud version
 
----
+2. Set Up Terraform State Storage
 
-## Overview
+Terraform uses a state file to track deployed resources.
+We store it in a GCS bucket for collaboration and safety.
 
-This project provisions a GCE virtual machine using Terraform. All resources are defined as code, enabling reproducible and auditable deployments.
+# Create bucket for Terraform state
+gsutil mb -l REGION gs://PROJECT_ID-tf-state
 
----
+# Enable versioning to track state changes
+gsutil versioning set on gs://PROJECT_ID-tf-state
 
-## Prerequisites
-
-- A Google Cloud project with billing enabled
-- Project ID for your GCP project
-- **Terraform** installed (Cloud Shell includes this by default)
-- **gcloud** CLI installed and authenticated (Cloud Shell includes this by default)
-
----
-
-## Setup Instructions
-
-1. **Configure Google Cloud Shell**
-   - Open Cloud Shell in the Google Cloud Console.
-   - Authenticate and set your project:
-     ```sh
-     gcloud auth login
-     gcloud config set project PROJECT_ID
-     ```
-   - Verify installations:
-     ```sh
-     terraform version
-     gcloud version
-     ```
-
-2. **Set Up Terraform State Storage**
-   - Create a Google Cloud Storage (GCS) bucket for storing Terraform state:
-     ```sh
-     gsutil mb -l REGION gs://PROJECT_ID-tf-state
-     gsutil versioning set on gs://PROJECT_ID-tf-state
-     ```
-
-3. **Edit the Terraform Configuration Files**
-   - Update `variables.tf` to set your desired `project_id`, `region`, and `zone`.
-
-4. **Run Terraform**
-   ```sh
-   terraform init
-   terraform plan
-   terraform apply -auto-approve
-   ```
-
----
-
-## Code Explanation
-
-The main Terraform configuration (`main.tf`) accomplishes the following:
-
-- **Specifies the provider**: Configures the Google provider with the required version and project/region settings.
-- **Configures the backend**: Stores Terraform state in a remote GCS bucket for reliability and collaboration.
-- **Provisions a Compute Engine VM**: 
-  - Creates a VM instance with the name `terraform-instance`.
-  - Sets the machine type (e2-micro, suitable for low-cost workloads).
-  - Chooses the boot disk image (Debian 12).
-  - Attaches the VM to the default network and assigns a public IP via `access_config`.
-
-**Example main.tf snippet:**
-```hcl
+3. Create Terraform Configuration Files
+main.tf
+# ------------------------------
+# Terraform settings
+# ------------------------------
 terraform {
   required_providers {
     google = {
-      source  = "hashicorp/google"
-      version = "~> 4.0"
+      source  = "hashicorp/google"  # Google Cloud provider from HashiCorp
+      version = "~> 4.0"            # Accept any 4.x.x version
     }
   }
+
   backend "gcs" {
-    bucket = "PROJECT_ID-tf-state"
-    prefix = "terraform/state"
+    bucket = "PROJECT_ID-tf-state"  # Remote state storage in GCS
+    prefix = "terraform/state"      # Folder path inside the bucket
   }
 }
 
+# ------------------------------
+# Provider configuration
+# ------------------------------
 provider "google" {
-  project = var.project_id
-  region  = var.region
+  project = var.project_id  # Project ID
+  region  = var.region      # Default region
 }
 
+# ------------------------------
+# Create a VM instance
+# ------------------------------
 resource "google_compute_instance" "default" {
-  name         = "terraform-instance"
-  machine_type = "e2-micro"
-  zone         = var.zone
+  name         = "terraform-instance"  # VM name
+  machine_type = "e2-micro"             # Free-tier eligible in some regions
+  zone         = var.zone               # Deployment zone
 
+  # Boot disk configuration
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-12"
+      image = "debian-cloud/debian-12"  # OS image
     }
   }
 
+  # Networking configuration
   network_interface {
-    subnetwork = "default"
-    access_config {}
+    subnetwork   = "default"   # Using default subnetwork
+    access_config {}           # Assigns external IP
   }
 }
-```
----
 
-## Verifying the Deployment
+variables.tf
+variable "project_id" {
+  description = "The ID of the Google Cloud project"
+  type        = string
+}
 
-- In the Google Cloud Console, go to **Compute Engine > VM instances** to see your running instance.
-- Or use:
-  ```sh
-  gcloud compute instances list
-  ```
+variable "region" {
+  description = "The region to deploy resources in"
+  type        = string
+}
 
----
+variable "zone" {
+  description = "The zone to deploy resources in"
+  type        = string
+}
 
-## Cleanup
+outputs.tf (Optional but Recommended)
+# Display VM's external IP after deployment
+output "vm_external_ip" {
+  description = "The external IP address of the VM"
+  value       = google_compute_instance.default.network_interface[0].access_config[0].nat_ip
+}
 
-To avoid incurring charges, destroy the resources when you are finished:
-```sh
+4. Run Terraform Commands
+# Initialize Terraform (downloads providers, sets up backend)
+terraform init
+
+# Preview changes before applying
+terraform plan
+
+# Apply configuration (deploy resources)
+terraform apply -auto-approve
+
+Verifying the Deployment
+
+Via Console:
+Navigate to Compute Engine > VM instances in the Google Cloud Console.
+
+Via CLI:
+
+gcloud compute instances list
+
+Cleanup
+
+To avoid costs:
+
 terraform destroy -auto-approve
-```
 
----
+References
 
-## References
+Terraform Documentation
 
-- [Terraform Documentation](https://www.terraform.io/docs/)
-- [Google Cloud Compute Engine](https://cloud.google.com/compute/docs/)
-- [gcloud CLI Overview](https://cloud.google.com/sdk/gcloud)
+Google Cloud Compute Engine
+
+gcloud CLI Overview
