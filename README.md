@@ -160,6 +160,7 @@ variable "zone" {
 ---
 
 #### `outputs.tf` *(Optional but Recommended)*
+you can create outputs.tf in similiar way after opening the editor. 
 ```hcl
 # Display VM's external IP after deployment
 output "vm_external_ip" {
